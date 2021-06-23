@@ -173,6 +173,26 @@ def pairs_bootstrap_of_literacy_fertility_data():
     plt.show()
 
 
+def hypothesis_test_on_pearson_correlation():
+    # Compute observed correlation: r_obs
+    r_obs = pearson_r(illiteracy, fertility)
+
+    # Initialize permutation replicates: perm_replicates
+    perm_replicates = np.empty(10000)
+
+    # Draw replicates
+    for i in range(10000):
+        # Permute illiteracy measurments: illiteracy_permuted
+        illiteracy_permuted = np.random.permutation(illiteracy)
+
+        # Compute Pearson correlation
+        perm_replicates[i] = pearson_r(illiteracy_permuted, fertility)
+
+    # Compute p-value: p
+    p = np.sum(perm_replicates >= r_obs) / len(perm_replicates)
+    print('p-val =', p)
+
+
 def main():
     set_seaborn_styling()
     pearson_co = eda_of_literacy_fertility_data()
@@ -181,6 +201,7 @@ def main():
     linear_regression_on_appropriate_anscombe_data()
     linear_regression_on_all_anscombe_data()
     pairs_bootstrap_of_literacy_fertility_data()
+    hypothesis_test_on_pearson_correlation()
 
 
 if __name__ == '__main__':

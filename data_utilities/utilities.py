@@ -135,3 +135,9 @@ def diff_of_means(data_1, data_2):
     diff = np.mean(data_1) - np.mean(data_2)
 
     return diff
+
+
+def diff_frac(data_A, data_B):
+    frac_A = np.sum(data_A) / len(data_A)
+    frac_B = np.sum(data_B) / len(data_B)
+    return frac_B - frac_A

@@ -3,6 +3,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 
+from data_utilities.utilities import draw_perm_reps
+
 
 def exploratory_data_analysis():
     # Exploratory Data Analysis
@@ -172,6 +174,25 @@ def generating_a_permutation_sample(dem_share_PA, dem_share_OH):
     print(f"Difference In Means, Original Sample: {np.mean(dem_share_PA) - np.mean(dem_share_OH)}")
 
 
+def frac_yea_dems(dems, reps):
+    """Compute fraction of Democrat yea votes."""
+    frac = np.sum(dems[True]) / len(dems)
+    return frac
+
+
+def the_vote_for_the_civil_rights_act_in_1964():
+    # Construct arrays of data: dems, reps
+    dems = np.array([True] * 153 + [False] * 91)
+    reps = np.array([True] * 136 + [False] * 35)
+
+    # Acquire permutation samples: perm_replicates
+    perm_replicates = draw_perm_reps(dems, reps, frac_yea_dems, 10000)
+
+    # Compute and print p-value: p
+    p = np.sum(perm_replicates <= 153 / 244) / len(perm_replicates)
+    print('p-value =', p)
+
+
 def main():
     df_swing, df_all = exploratory_data_analysis()
     set_seaborn_styling()
@@ -196,6 +217,8 @@ def main():
     least_squares_with_np_polyfit_example(df_swing['total_votes'], df_swing['dem_share'])
     generating_a_pairs_bootstrap_sample(df_swing['total_votes'], df_swing['dem_share'])
     generating_a_permutation_sample(dem_share_PA, dem_share_OH)
+
+    the_vote_for_the_civil_rights_act_in_1964()
 
 
 if __name__ == '__main__':
