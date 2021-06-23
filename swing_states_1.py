@@ -142,26 +142,60 @@ def simulate_trials_of_coin_flips():
     print(f"Percent of trials with all four heads: {n_all_heads / 10000}\n")
 
 
+def least_squares_with_np_polyfit_example(total_votes, dem_share):
+    [slope, intercept] = np.polyfit(total_votes, dem_share, 1)
+    print(f"\nSlope: {slope}")
+    print(f"Intercept: {intercept}\n")
+
+
+def generating_a_pairs_bootstrap_sample(total_votes, dem_share):
+    inds = np.arange(len(total_votes))
+    bs_inds = np.random.choice(inds, len(inds))
+    bs_total_votes = total_votes[bs_inds]
+    bs_dem_share = dem_share[bs_inds]
+
+    [bs_slope, bs_intercept] = np.polyfit(bs_total_votes, bs_dem_share, 1)
+    [orig_slope, orig_intercept] = np.polyfit(total_votes, dem_share, 1)
+
+    print(f"\nOriginal     Slope: {orig_slope}    Intercept: {orig_intercept}")
+    print(f"Bootstrap    Slope: {bs_slope}     Intercept: {bs_intercept}\n")
+
+
+def generating_a_permutation_sample(dem_share_PA, dem_share_OH):
+    dem_share_both = np.concatenate((dem_share_PA, dem_share_OH))
+    dem_share_perm = np.random.permutation(dem_share_both)
+    perm_sample_PA = dem_share_perm[:len(dem_share_PA)]
+    perm_sample_OH = dem_share_perm[len(dem_share_OH):]
+
+    # The Permutation Replicate:
+    print(f"Difference In Means, Perm Sample: {np.mean(perm_sample_PA) - np.mean(perm_sample_OH)}")
+    print(f"Difference In Means, Original Sample: {np.mean(dem_share_PA) - np.mean(dem_share_OH)}")
+
+
 def main():
     df_swing, df_all = exploratory_data_analysis()
     set_seaborn_styling()
-    generate_histogram(df_swing)
-    generate_swarm_plot(df_swing)
-    make_ecdf(df_swing)
-    make_split_ecdf(df_swing)
+    # generate_histogram(df_swing)
+    # generate_swarm_plot(df_swing)
+    # make_ecdf(df_swing)
+    # make_split_ecdf(df_swing)
 
     dem_share_PA, dem_share_OH, dem_share_FL = get_shares(df_swing)
-    mean_vote_percentage = get_mean_vote_percentage(dem_share_PA, dem_share_OH, dem_share_FL)
-    compute_initial_percentiles(df_swing)
-    generate_box_plot_all(df_all)
+    # mean_vote_percentage = get_mean_vote_percentage(dem_share_PA, dem_share_OH, dem_share_FL)
+    # compute_initial_percentiles(df_swing)
+    # generate_box_plot_all(df_all)
 
-    pa_var, oh_var, fl_var = compute_variance(dem_share_PA, dem_share_OH, dem_share_FL)
-    pa_std, oh_std, fl_std = compute_stds(dem_share_PA, dem_share_OH, dem_share_FL)
+    # pa_var, oh_var, fl_var = compute_variance(dem_share_PA, dem_share_OH, dem_share_FL)
+    # pa_std, oh_std, fl_std = compute_stds(dem_share_PA, dem_share_OH, dem_share_FL)
 
-    generate_scatter_plot(df_swing)
+    # generate_scatter_plot(df_swing)
 
-    simulate_coin_flips()
-    simulate_trials_of_coin_flips()
+    # simulate_coin_flips()
+    # simulate_trials_of_coin_flips()
+
+    least_squares_with_np_polyfit_example(df_swing['total_votes'], df_swing['dem_share'])
+    generating_a_pairs_bootstrap_sample(df_swing['total_votes'], df_swing['dem_share'])
+    generating_a_permutation_sample(dem_share_PA, dem_share_OH)
 
 
 if __name__ == '__main__':
