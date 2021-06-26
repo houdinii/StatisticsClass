@@ -1,7 +1,10 @@
 import matplotlib.pyplot as plt  # Used to draw network plot
 import networkx as nx  # NetworkX is typically imported as nx
+from networkx import number_of_selfloops
 import datetime
+from datetime import date
 
+# Data from DataCamp iPython
 T_sub_nodes = {
     1: {'category': 'I', 'occupation': 'politician'},
     3: {'category': 'D', 'occupation': 'celebrity'},
@@ -176,6 +179,11 @@ T_sub.add_nodes_from(T_sub_nodes)
 nx.set_node_attributes(T_sub, T_sub_nodes)
 T_sub.add_edges_from(T_sub_edges)
 
+# Data from data folder
+T = nx.read_gpickle('./data/ego-twitter.p')
+
+# Shared Globals
+
 
 def first_exposure_to_networkx():
     G = nx.Graph()  # Using nx.Graph we can initialize empty graph which we can add nodes and edges
@@ -198,9 +206,58 @@ def basic_drawing_of_a_network_using_NetworkX():
     plt.show()
 
 
+def queries_on_a_graph():
+
+    # Use a list comprehension to get the nodes of interest: noi
+    noi = [n for n, d in T.nodes(data=True) if d['occupation'] == 'scientist']
+
+    # Use a list comprehension to get the edges of interest: eoi
+    eoi = [(u, v) for u, v, d in T.edges(data=True) if d['date'] < date(2010, 1, 1)]
+    return noi, eoi
+
+
+# Define find_selfloop_nodes()
+def specifying_a_weight_on_edges():
+    global T
+
+    # Set the weight of the edge
+    T.edges[1, 10]['weight'] = 2
+
+    # Iterate over all the edges (with metadata)
+    for u, v, d in T.edges(data=True):
+
+        # Check if node 293 is involved
+        if 293 in [u, v]:
+            # Set the weight to 1.1
+            T.edges[u, v]['weight'] = 1.1
+
+
+def find_selfloop_nodes(G):
+    """
+    Finds all nodes that have self-loops in the graph G.
+    """
+    nodes_in_selfloops = []
+
+    # Iterate over all the edges of G
+    for u, v in G.edges:
+        if u == v:  # Check if node u and node v are the same
+            nodes_in_selfloops.append(u)  # Append node u to nodes_in_selfloops
+    return nodes_in_selfloops
+
+
+def checking_whether_there_are_self_loops_in_the_graph():
+    if number_of_selfloops(T) == len(find_selfloop_nodes(T)):
+        print(f"Numbers Match At {number_of_selfloops(T)} Self Loops")
+    else:
+        print("Numbers Do Not Match")
+
+
 def main():
     # first_exposure_to_networkx()
     basic_drawing_of_a_network_using_NetworkX()
+    noi, eoi = queries_on_a_graph()
+    specifying_a_weight_on_edges()
+    checking_whether_there_are_self_loops_in_the_graph()
 
 
 if __name__ == '__main__':
