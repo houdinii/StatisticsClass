@@ -4,6 +4,7 @@ import datetime
 import nxviz as nv  # Network Visualizations
 from nxviz import CircosPlot, ArcPlot
 
+
 T_nodes = {3584: {'category': 'D', 'occupation': 'celebrity'}, 6147: {'category': 'I', 'occupation': 'celebrity'},
            15369: {'category': 'I', 'occupation': 'celebrity'}, 17419: {'category': 'P', 'occupation': 'scientist'},
            8204: {'category': 'D', 'occupation': 'celebrity'}, 11281: {'category': 'I', 'occupation': 'politician'},
@@ -299,12 +300,166 @@ def v_number_of_neighbors():
     print(nx.degree_centrality(G))  # NOTE: SELF LOOPS ARE NOT CONSIDERED WITH THIS FUNCTION!
 
 
+# Define nodes_with_m_nbrs()
+def nodes_with_m_nbrs(G, m):
+    """
+    Returns all nodes in graph G that have m neighbors.
+    """
+    nodes = set()
+
+    # Iterate over all nodes in G
+    for n in G.nodes():
+
+        # Check if the number of neighbors of n matches m
+        if len(list(G.neighbors(n))) == m:
+
+            # Add the node n to the set
+            nodes.add(n)
+
+    # Return the nodes with m neighbors
+    return nodes
+
+
+def compute_number_of_neighbors_for_each_node():
+    # Compute and print all nodes in T that have 6 neighbors
+    six_nbrs = nodes_with_m_nbrs(T, 6)
+    print(f"All Nodes In T That Have 6 Neighbors: {six_nbrs}")
+    print(f"Total Number: {len(six_nbrs)}")
+
+    """
+    Great work! The number of neighbors a node has is one way to identify important nodes. 
+    It looks like 2 nodes in graph T have 6 neighbors.
+    """
+
+
+def compute_degree_distribution():
+    """
+    Compute degree distribution
+    The number of neighbors that a node has is called its "degree", and it's possible to compute the degree distribution across the
+    entire graph. In this exercise, your job is to compute the degree distribution across T.
+
+    Instructions:
+    + Use a list comprehension along with the .neighbors(n) method to get the degree of every node. The result should be a list of
+      integers.
+    + Use n as your iterator variable.
+    + The output expression of your list comprehension should be the number of neighbors that node n has - that is, its degree. Use
+      the len() and list() functions together with the .neighbors() method to compute this.
+    + The iterable in your list comprehension is all the nodes in T, accessed using the .nodes() method.
+    + Print the degrees.
+    """
+    # fruits = ["apple", "banana", "cherry", "kiwi", "mango"]
+    # newlist = [x for x in fruits if "a" in x]
+
+    # Compute the degree of every node: degrees
+    degrees = [len(list(T.neighbors(n))) for n in T.nodes()]
+
+    # Print the degrees
+    print(f"The Degree Of Every Node In T: {degrees}")
+    return degrees
+
+
+def degree_centrality_distribution(degrees):
+    """
+    Degree centrality distribution
+    The degree of a node is the number of neighbors that it has. The degree centrality is the number of neighbors divided by all
+    possible neighbors that it could have. Depending on whether self-loops are allowed, the set of possible neighbors a node could
+    have could also include the node itself.
+
+    The nx.degree_centrality(G) function returns a dictionary, where the keys are the nodes and the values are their degree
+    centrality values.
+
+    The degree distribution degrees you computed in the previous exercise using the list comprehension has been pre-loaded.
+
+    Instructions:
+    + Compute the degree centrality of the Twitter network T.
+    + Using plt.hist(), plot a histogram of the degree centrality distribution of T. This can be accessed using
+      list(deg_cent.values()).
+    + Plot a histogram of the degree distribution degrees of T. This is the same list you computed in the last exercise.
+    + Create a scatter plot with degrees on the x-axis and the degree centrality distribution list(deg_cent.values()) on the y-axis.
+    """
+
+    # Compute the degree centrality of the Twitter network: deg_cent
+    deg_cent = nx.degree_centrality(T)
+
+    # Plot a histogram of the degree centrality distribution of the graph.
+    plt.figure()
+    plt.hist(list(deg_cent.values()))
+    plt.show()
+
+    # Plot a histogram of the degree distribution of the graph
+    plt.figure()
+    plt.hist(degrees)
+    plt.show()
+
+    # Plot a scatter plot of the centrality distribution and the degree distribution
+    plt.figure()
+    plt.scatter(degrees, list(deg_cent.values()))
+    plt.show()
+
+    """
+    Great work! Click the 'Next Plot' and 'Previous Plot' buttons to cycle through your 3 plots. Given the similarities of their 
+    histograms, it should not surprise you to see a perfect correlation between the centrality distribution and the degree 
+    distribution.
+    """
+
+
+def shortest_path_i():
+    """
+    Shortest Path I
+    You can leverage what you know about finding neighbors to try finding paths in a network. One algorithm for path-finding between two nodes is the "breadth-first search" (BFS) algorithm. In a BFS algorithm, you start from a particular node and iteratively search through its neighbors and neighbors' neighbors until you find the destination node.
+
+    Pathfinding algorithms are important because they provide another way of assessing node importance; you'll see this in a later exercise.
+
+    In this set of 3 exercises, you're going to build up slowly to get to the final BFS algorithm. The problem has been broken into 3 parts that, if you complete in succession, will get you to a first pass implementation of the BFS algorithm.
+
+    Instructions:
+    + Create a function called path_exists() that has 3 parameters - G, node1, and node2 - and returns whether or not a path exists
+      between the two nodes.
+    + Initialize the queue of nodes to visit with the first node, node1. queue should be a list.
+    + Iterate over the nodes in queue.
+    + Get the neighbors of the node using the .neighbors() method of the graph G.
+    + Check to see if the destination node node2 is in the set of neighbors. If it is, return True.
+    """
+    # See path_exists() below
+
+
+def path_exists(G, node1, node2):
+    """
+        This function checks whether a path exists between two nodes (node1, node2) in graph G.
+        """
+    visited_nodes = set()
+
+    # Initialize the queue of nodes to visit with the first node: queue
+    queue = [node1]
+
+    # Iterate over the nodes in the queue
+    for node in queue:
+
+        # Get neighbors of the node
+        neighbors = G.neighbors(node)
+
+        # Check to see if the destination node is in the set of neighbors
+        if node2 in neighbors:
+            print('Path exists between nodes {0} and {1}'.format(node1, node2))
+            return True
+            break
+
+    """
+    Great! In the next exercise, you'll extend this function by including the condition where the destination node is not 
+    present in the neighbors.
+    """
+
+
 def main():
     # nxviz_quickstart()
     # visualizing_using_matrix_plots()
     # visualizing_using_circos_plots()
     # visualizing_using_arc_plots()
-    v_number_of_neighbors()
+    # v_number_of_neighbors()
+    # compute_number_of_neighbors_for_each_node()
+    degrees = compute_degree_distribution()
+    degree_centrality_distribution(degrees)
+    shortest_path_i()
 
 
 if __name__ == '__main__':
