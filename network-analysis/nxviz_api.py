@@ -442,6 +442,7 @@ def path_exists(G, node1, node2):
         if node2 in neighbors:
             print('Path exists between nodes {0} and {1}'.format(node1, node2))
             return True
+            # noinspection PyUnreachableCode
             break
 
     """
